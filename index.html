@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramp Help Center - Interactive Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 3rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .search-box:focus {
+            border-color: #6c5ce7;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 100;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .search-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 4rem 0;
+        }
+
+        .quick-actions h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+            color: #2d3436;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border-color: #6c5ce7;
+        }
+
+        .action-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .action-card h3 {
+            margin-bottom: 1rem;
+            color: #2d3436;
+            font-size: 1.3rem;
+        }
+
+        .action-card p {
+            color: #636e72;
+            line-height: 1.6;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .categories-section h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+            color: #2d3436;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category-item {
+            padding: 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .category-item:hover {
+            border-color: #6c5ce7;
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .category-item h3 {
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .category-item p {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2d3436;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #636e72;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+        .modal-body h3 {
+            color: #2d3436;
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .modal-body p {
+            color: #636e72;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .modal-body ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .modal-body li {
+            color: #636e72;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            margin-bottom: 2rem;
+            color: #2d3436;
+        }
+
+        .contact-options {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            padding: 1rem 2rem;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .contact-btn:hover {
+            background: #5b4bd3;
+            transform: translateY(-2px);
+        }
+
+        .contact-btn.secondary {
+            background: white;
+            color: #6c5ce7;
+            border: 2px solid #6c5ce7;
+        }
+
+        .contact-btn.secondary:hover {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1.5rem 0;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .header-subtitle {
+                font-size: 1rem;
+            }
+
+            .search-section {
+                padding: 2rem 0;
+            }
+
+            .quick-actions, .categories-section {
+                padding: 3rem 0;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-options {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6c5ce7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success/Error Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">💳 Ramp Help Center</h1>
+                <p class="header-subtitle">Your comprehensive guide to mastering corporate spend management</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Search for help articles, guides, or ask a question..." id="searchInput">
+                <div class="search-suggestions" id="searchSuggestions">
+                    <!-- Dynamic suggestions will be populated here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <h2>Quick Help</h2>
+            <div class="actions-grid">
+                <div class="action-card" data-action="getting-started">
+                    <div class="action-icon">🚀</div>
+                    <h3>Getting Started</h3>
+                    <p>New to Ramp? Learn the basics of setting up your account and making your first transactions.</p>
+                </div>
+                <div class="action-card" data-action="card-management">
+                    <div class="action-icon">💳</div>
+                    <h3>Card Management</h3>
+                    <p>Manage your corporate cards, set spending limits, and control employee access.</p>
+                </div>
+                <div class="action-card" data-action="expense-tracking">
+                    <div class="action-icon">📊</div>
+                    <h3>Expense Tracking</h3>
+                    <p>Track expenses in real-time, categorize transactions, and generate detailed reports.</p>
+                </div>
+                <div class="action-card" data-action="integrations">
+                    <div class="action-icon">🔗</div>
+                    <h3>Integrations</h3>
+                    <p>Connect Ramp with your existing accounting software and business tools.</p>
+                </div>
+                <div class="action-card" data-action="security">
+                    <div class="action-icon">🔒</div>
+                    <h3>Security & Controls</h3>
+                    <p>Learn about Ramp's security features and how to protect your account.</p>
+                </div>
+                <div class="action-card" data-action="billing">
+                    <div class="action-icon">💰</div>
+                    <h3>Billing & Payments</h3>
+                    <p>Understand Ramp's pricing, billing cycles, and payment processing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories-section">
+        <div class="container">
+            <h2>Browse by Category</h2>
+            <div class="categories-grid">
+                <div class="category-item" data-category="account-setup">
+                    <h3>Account Setup</h3>
+                    <p>Initial configuration and onboarding</p>
+                </div>
+                <div class="category-item" data-category="transactions">
+                    <h3>Transactions</h3>
+                    <p>Processing payments and managing transactions</p>
+                </div>
+                <div class="category-item" data-category="reporting">
+                    <h3>Reporting</h3>
+                    <p>Analytics, insights, and financial reports</p>
+                </div>
+                <div class="category-item" data-category="mobile-app">
+                    <h3>Mobile App</h3>
+                    <p>Using Ramp on iOS and Android devices</p>
+                </div>
+                <div class="category-item" data-category="api">
+                    <h3>API & Developers</h3>
+                    <p>Integration guides and API documentation</p>
+                </div>
+                <div class="category-item" data-category="troubleshooting">
+                    <h3>Troubleshooting</h3>
+                    <p>Common issues and solutions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2>Still Need Help?</h2>
+            <p>Our support team is here to help you succeed</p>
+            <div class="contact-options">
+                <button class="contact-btn" onclick="openChat()">💬 Live Chat</button>
+                <button class="contact-btn secondary" onclick="openTicket()">📧 Submit Ticket</button>
+                <button class="contact-btn secondary" onclick="scheduleCall()">📞 Schedule Call</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for detailed content -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Help Topic</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Loading help content...</p>
+    </div>
+
+    <!-- Messages -->
+    <div class="message" id="messageContainer"></div>
+
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        
+        const searchData = [
+            'How to set up my Ramp account',
+            'Creating virtual cards for employees',
+            'Setting spending limits and controls',
+            'Integrating with QuickBooks',
+            'Viewing expense reports',
+            'Mobile app download and setup',
+            'Freezing or unfreezing cards',
+            'Adding team members',
+            'Understanding transaction fees',
+            'Connecting bank accounts',
+            'Expense categorization',
+            'API documentation',
+            'Security best practices',
+            'Reconciling expenses',
+            'Managing receipt uploads'
+        ];
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length > 2) {
+                const filtered = searchData.filter(item => 
+                    item.toLowerCase().includes(query)
+                ).slice(0, 5);
+                
+                if (filtered.length > 0) {
+                    searchSuggestions.innerHTML = filtered
+                        .map(item => `<div class="suggestion-item" onclick="selectSuggestion('${item}')">${item}</div>`)
+                        .join('');
+                    searchSuggestions.classList.add('show');
+                } else {
+                    searchSuggestions.classList.remove('show');
+                }
+            } else {
+                searchSuggestions.classList.remove('show');
+            }
+        });
+
+        function selectSuggestion(suggestion) {
+            searchInput.value = suggestion;
+            searchSuggestions.classList.remove('show');
+            performSearch(suggestion);
+        }
+
+        function performSearch(query) {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                openModal('Search Results', `
+                    <h3>Results for: "${query}"</h3>
+                    <p>Here are the most relevant help articles for your search:</p>
+                    <ul>
+                        <li><strong>Complete Guide:</strong> ${query}</li>
+                        <li><strong>Quick Start:</strong> Essential steps for ${query.toLowerCase()}</li>
+                        <li><strong>Troubleshooting:</strong> Common issues with ${query.toLowerCase()}</li>
+                        <li><strong>Video Tutorial:</strong> Watch how to ${query.toLowerCase()}</li>
+                    </ul>
+                    <p>Each article includes step-by-step instructions, screenshots, and helpful tips to get you up and running quickly.</p>
+                `);
+            }, 1500);
+        }
+
+        // Action card functionality
+        document.querySelectorAll('.action-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const action = this.dataset.action;
+                handleActionClick(action);
+            });
+        });
+
+        function handleActionClick(action) {
+            const content = getActionContent(action);
+            openModal(content.title, content.body);
+        }
+
+        function getActionContent(action) {
+            const contents = {
+                'getting-started': {
+                    title: 'Getting Started with Ramp',
+                    body: `
+                        <h3>Welcome to Ramp!</h3>
+                        <p>Let's get you set up in just a few steps:</p>
+                        <h3>1. Account Setup</h3>
+                        <ul>
+                            <li>Complete your company profile</li>
+                            <li>Add your business information</li>
+                            <li>Verify your identity</li>
+                        </ul>
+                        <h3>2. Connect Your Bank</h3>
+                        <p>Link your business bank account to enable automatic payments and cash flow management.</p>
+                        <h3>3. Create Your First Cards</h3>
+                        <ul>
+                            <li>Order physical cards for your team</li>
+                            <li>Generate virtual cards instantly</li>
+                            <li>Set spending limits and controls</li>
+                        </ul>
+                        <h3>4. Invite Team Members</h3>
+                        <p>Add employees and set their permissions to start collaborating on expense management.</p>
+                    `
+                },
+                'card-management': {
+                    title: 'Card Management',
+                    body: `
+                        <h3>Managing Your Ramp Cards</h3>
+                        <p>Take full control of your corporate spending with Ramp's powerful card management features.</p>
+                        <h3>Physical Cards</h3>
+                        <ul>
+                            <li>Order and distribute cards to team members</li>
+                            <li>Set individual spending limits</li>
+                            <li>Track usage in real-time</li>
+                        </ul>
+                        <h3>Virtual Cards</h3>
+                        <ul>
+                            <li>Generate instant virtual cards</li>
+                            <li>Perfect for online purchases</li>
+                            <li>Enhanced security with single-use options</li>
+                        </ul>
+                        <h3>Controls & Limits</h3>
+                        <p>Set merchant restrictions, spending categories, and time-based controls to ensure compliance with your expense policy.</p>
+                    `
+                },
+                'expense-tracking': {
+                    title: 'Expense Tracking',
+                    body: `
+                        <h3>Real-Time Expense Tracking</h3>
+                        <p>Monitor and categorize all your business expenses automatically.</p>
+                        <h3>Automatic Categorization</h3>
+                        <ul>
+                            <li>AI-powered expense categorization</li>
+                            <li>Custom category creation</li>
+                            <li>Bulk editing and updates</li>
+                        </ul>
+                        <h3>Receipt Management</h3>
+                        <ul>
+                            <li>Mobile receipt capture</li>
+                            <li>Automatic receipt matching</li>
+                            <li>OCR text extraction</li>
+                        </ul>
+                        <h3>Reporting & Analytics</h3>
+                        <p>Generate detailed reports, track spending trends, and gain insights into your company's spending patterns.</p>
+                    `
+                },
+                'integrations': {
+                    title: 'Integrations',
+                    body: `
+                        <h3>Connect Ramp with Your Tools</h3>
+                        <p>Seamlessly integrate Ramp with your existing business software.</p>
+                        <h3>Accounting Software</h3>
+                        <ul>
+                            <li>QuickBooks Online & Desktop</li>
+                            <li>Xero</li>
+                            <li>NetSuite</li>
+                            <li>Sage Intacct</li>
+                        </ul>
+                        <h3>Business Tools</h3>
+                        <ul>
+                            <li>Slack notifications</li>
+                            <li>Microsoft Teams</li>
+                            <li>Google Workspace</li>
+                            <li>Zapier automation</li>
+                        </ul>
+                        <h3>API Access</h3>
+                        <p>Build custom integrations with our comprehensive API documentation and developer resources.</p>
+                    `
+                },
+                'security': {
+                    title: 'Security & Controls',
+                    body: `
+                        <h3>Enterprise-Grade Security</h3>
+                        <p>Ramp provides bank-level security to protect your financial data.</p>
+                        <h3>Data Protection</h3>
+                        <ul>
+                            <li>256-bit SSL encryption</li>
+                            <li>PCI DSS compliance</li>
+                            <li>SOC 2 Type II certified</li>
+                            <li>Regular security audits</li>
+                        </ul>
+                        <h3>Access Controls</h3>
+                        <ul>
+                            <li>Multi-factor authentication (MFA)</li>
+                            <li>Role-based permissions</li>
+                            <li>Session management</li>
+                            <li>IP whitelisting</li>
+                        </ul>
+                        <h3>Fraud Protection</h3>
+                        <p>Real-time transaction monitoring, suspicious activity alerts, and instant card controls help prevent unauthorized usage.</p>
+                    `
+                },
+                'billing': {
+                    title: 'Billing & Payments',
+                    body: `
+                        <h3>Understanding Ramp Billing</h3>
+                        <p>Transparent pricing with no hidden fees.</p>
+                        <h3>Pricing Structure</h3>
+                        <ul>
+                            <li>No annual fees</li>
+                            <li>No card fees</li>
+                            <li>No foreign transaction fees</li>
+                            <li>Competitive interchange rates</li>
+                        </ul>
+                        <h3>Payment Processing</h3>
+                        <ul>
+                            <li>Automatic bill payments</li>
+                            <li>Flexible payment schedules</li>
+                            <li>Early payment discounts</li>
+                            <li>Cash flow optimization</li>
+                        </ul>
+                        <h3>Billing Support</h3>
+                        <p>Access detailed billing statements, payment history, and get help with any billing questions from our support team.</p>
+                    `
+                }
+            };
+            return contents[action] || { title: 'Help Topic', body: '<p>Content coming soon...</p>' };
+        }
+
+        // Category functionality
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const category = this.dataset.category;
+                handleCategoryClick(category);
+            });
+        });
+
+        function handleCategoryClick(category) {
+            const content = getCategoryContent(category);
+            openModal(content.title, content.body);
+        }
+
+        function getCategoryContent(category) {
+            const contents = {
+                'account-setup': {
+                    title: 'Account Setup',
+                    body: `
+                        <h3>Setting Up Your Ramp Account</h3>
+                        <p>Everything you need to know about getting started:</p>
+                        <ul>
+                            <li>Company registration and verification</li>
+                            <li>Banking information setup</li>
+                            <li>Initial user configuration</li>
+                            <li>Compliance and documentation</li>
+                            <li>Team onboarding best practices</li>
+                        </ul>
+                    `
+                },
+                'transactions': {
+                    title: 'Transactions',
+                    body: `
+                        <h3>Transaction Management</h3>
+                        <p>Learn how to handle all types of transactions:</p>
+                        <ul>
+                            <li>Processing payments and purchases</li>
+                            <li>Managing recurring transactions</li>
+                            <li>Handling refunds and disputes</li>
+                            <li>Transaction categorization</li>
+                            <li>Approval workflows</li>
+                        </ul>
+                    `
+                },
+                'reporting': {
+                    title: 'Reporting & Analytics',
+                    body: `
+                        <h3>Financial Reporting</h3>
+                        <p>Generate insights with comprehensive reporting:</p>
+                        <ul>
+                            <li>Expense reports and summaries</li>
+                            <li>Budget tracking and forecasting</li>
+                            <li>Custom report creation</li>
+                            <li>Data export and sharing</li>
+                            <li>Automated reporting schedules</li>
+                        </ul>
+                    `
+                },
+                'mobile-app': {
+                    title: 'Mobile App',
+                    body: `
+                        <h3>Ramp Mobile App</h3>
+                        <p>Manage expenses on the go:</p>
+                        <ul>
+                            <li>iOS and Android app features</li>
+                            <li>Receipt capture and submission</li>
+                            <li>Card management and controls</li>
+                            <li>Expense approval workflows</li>
+                            <li>Push notifications and alerts</li>
+                        </ul>
+                    `
+                },
+                'api': {
+                    title: 'API & Developers',
+                    body: `
+                        <h3>Developer Resources</h3>
+                        <p>Build powerful integrations with Ramp:</p>
+                        <ul>
+                            <li>RESTful API documentation</li>
+                            <li>Authentication and security</li>
+                            <li>Webhooks and real-time updates</li>
+                            <li>SDK and code examples</li>
+                            <li>Rate limits and best practices</li>
+                        </ul>
+                    `
+                },
+                'troubleshooting': {
+                    title: 'Troubleshooting',
+                    body: `
+                        <h3>Common Issues & Solutions</h3>
+                        <p>Quick fixes for common problems:</p>
+                        <ul>
+                            <li>Login and authentication issues</li>
+                            <li>Card transaction problems</li>
+                            <li>Integration connectivity</li>
+                            <li>Mobile app troubleshooting</li>
+                            <li>Performance optimization</li>
+                        </ul>
+                    `
+                }
+            };
+            return contents[category] || { title: 'Category', body: '<p>Content coming soon...</p>' };
+        }
+
+        // Modal functionality
+        function openModal(title, body) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = body;
+            document.getElementById('contentModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('contentModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Contact functionality
+        function openChat() {
+            showMessage('Live chat feature would open here. Connect with our support team in real-time!', 'success');
+        }
+
+        function openTicket() {
+            showMessage('Ticket submission form would open here. Describe your issue and we\'ll get back to you!', 'success');
+        }
+
+        function scheduleCall() {
+            showMessage('Call scheduling interface would open here. Pick a time that works for you!', 'success');
+        }
+
+        // Utility functions
+        function showLoading() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
+        function showMessage(text, type = 'success') {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.textContent = text;
+            messageContainer.className = `message ${type} show`;
+            setTimeout(() => {
+                messageContainer.classList.remove('show');
+            }, 5000);
+        }
+
+        // Close search suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-container')) {
+                searchSuggestions.classList.remove('show');
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('contentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                searchSuggestions.classList.remove('show');
+            }
+            if (e.key === '/' && !e.target.matches('input, textarea')) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Ramp Help Center loaded successfully!');
+            // Add any initialization code here
+        });
+    </script>
+</body>
+</html>
